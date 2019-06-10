@@ -1,0 +1,64 @@
+{
+  "welcomeFile": "/webapp/index.html",
+  "routes": [
+    {
+      "path": "/resources",
+      "target": {
+        "type": "service",
+        "name": "sapui5",
+        "entryPath": "/resources"
+      },
+      "description": "SAPUI5 Resources"
+    },
+    {
+      "path": "/test-resources",
+      "target": {
+        "type": "service",
+        "name": "sapui5",
+        "entryPath": "/test-resources"
+      },
+      "description": "SAPUI5 Test Resources"
+    },
+    {
+      "path": "/ODATA_IBP_CONNECT",
+      "target": {
+        "type": "destination",
+        "name": "ODATA_IBP_CONNECT"
+      },
+      "description": "Connection to IBP System"
+    },
+    {
+      "path": "/IBP_GET_JOB_DATA",
+      "target": {
+        "type": "destination",
+        "name": "IBP_GET_JOB_DATA"
+      },
+      "description": "Connection to IBP System"
+    },
+    {
+      "path": "/FC2_Connection",
+      "target": {
+        "type": "destination",
+        "name": "FC2_Connection"
+      },
+      "description": "Connection to FC2 System"
+    },
+    {
+      "path": "/PT6_GET_DATA",
+      "target": {
+        "type": "destination",
+        "name": "PT6_GET_DATA"
+      },
+      "description": "Get data from PT6 system"
+    },
+    {
+      "path": "/LOG_SRV",
+      "target": {
+        "type": "destination",
+        "name": "LOG_SRV"
+      },
+      "description": "Get log data from PT6 system"
+    }
+  ],
+  "sendWelcomeFileRedirect": true
+}

@@ -1,0 +1,61 @@
+ID: ibp_save_JAVA
+_schema-version: '2.1'
+version: 0.0.1
+modules:
+  - name: html_mod
+    type: html5
+    path: html_mod
+    parameters:
+      disk-quota: 256M
+      memory: 256M
+    build-parameters:
+      builder: grunt
+    requires:
+      - name: uaa_ibp_save_JAVA
+      - name: dest_ibp_save_JAVA
+      - name: node_js_api
+        group: destinations
+        properties:
+          name: get_data_api
+          url: '~{url}'
+      - name: conn_ibp_save_JAVA
+  - name: hana_db
+    type: hdb
+    path: hana_db
+    requires:
+      - name: hdi_hana_db
+  - name: node_js
+    type: nodejs
+    path: node_js
+    provides:
+      - name: node_js_api
+        properties:
+          url: '${default-url}'
+    requires:
+      - name: uaa_ibp_save_JAVA
+      - name: hdi_hana_db
+      - name: hana_db
+resources:
+  - name: uaa_ibp_save_JAVA
+    parameters:
+      path: ./xs-security.json
+      service-plan: application
+      service: xsuaa
+    type: org.cloudfoundry.managed-service
+  - name: dest_ibp_save_JAVA
+    parameters:
+      service-plan: lite
+      service: destination
+    type: org.cloudfoundry.managed-service
+  - name: hdi_hana_db
+    parameters:
+      service-name: db
+      service: hanatrial
+      service-plan: hdi-shared
+    type: org.cloudfoundry.existing-service
+  - name: conn_ibp_save_JAVA
+    parameters:
+      service-plan: lite
+      service: connectivity
+    type: org.cloudfoundry.managed-service
+    

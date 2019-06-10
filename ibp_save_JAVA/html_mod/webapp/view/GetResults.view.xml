@@ -1,0 +1,34 @@
+<mvc:View controllerName="html_mod.html_mod.controller.GetResults" xmlns:l="sap.ui.layout" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+	<Page>
+		<content>
+			<l:VerticalLayout class="sapUiSmallMargin">
+				<!--<Input id="templateName" placeholder="Enter Template Name" valueLiveUpdate="true" width="400px"/>-->
+				<Button id="submitData" press="submitData" text="Submit Data" width="400px"/>
+			</l:VerticalLayout>
+			<Table id="attrTable" headerText="Filters" items="{/Data}" class="sapUiResponsiveMargin" width="auto" visible="false">
+				<headerToolbar>
+					<Toolbar>
+						<Title text="Filters"/>
+						<ToolbarSpacer/>
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column>
+						<Text text="Attribute"/>
+					</Column>
+					<Column>
+						<Text text="Value"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<Text text="{attribute}"/>
+							<Text text="{value}"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+	</Page>
+</mvc:View>

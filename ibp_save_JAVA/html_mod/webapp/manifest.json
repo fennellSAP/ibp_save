@@ -1,0 +1,157 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "html_mod.html_mod",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"sourceTemplate": {
+			"id": "servicecatalog.connectivityComponentForManifest",
+			"version": "0.0.0"
+		},
+		"dataSources": {
+			"IBP_SRV": {
+				"uri": "/LOG_SRV",
+				"type": "OData",
+				"settings": {
+					"localUri": "localService/metadata.xml"
+				}
+			},
+			"IBP_GET_JOB_DATA": {
+				"uri": "/IBP_GET_JOB_DATA/index.xsodata",
+				"type": "OData",
+				"settings": {
+					"localUri": "localService/metadata.xml"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"flexEnabled": false,
+		"rootView": {
+			"viewName": "html_mod.html_mod.view.Splash",
+			"type": "XML",
+			"async": true,
+			"id": "Splash"
+		},
+		"dependencies": {
+			"minUI5Version": "1.60.1",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "html_mod.html_mod.i18n.i18n"
+				}
+			},
+			"": {
+				"type": "sap.ui.model.odata.v2.ODataModel",
+				"settings": {
+					"defaultOperationMode": "Server",
+					"defaultBindingMode": "OneWay",
+					"defaultCountMode": "Request"
+				},
+				"dataSource": "IBP_GET_JOB_DATA",
+				"preload": true
+			},
+			"userInfo": {
+				"type": "sap.ui.model.json.JSONModel"
+			},
+			"IBPSRVModel": {
+				"type": "sap.ui.model.odata.v2.ODataModel",
+				"settings": {
+					"defaultOperationMode": "Server",
+					"defaultBindingMode": "OneWay",
+					"defaultCountMode": "Request",
+					"useBatch": true
+				},
+				"dataSource": "IBP_SRV",
+				"preload": true
+			}
+		},
+		"resources": {
+			"css": [{
+				"uri": "css/style.css"
+			}]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"async": true,
+				"viewPath": "html_mod.html_mod.view",
+				"controlAggregation": "pages",
+				"controlId": "app",
+				"clearControlAggregation": false
+			},
+			"routes": [{
+				"name": "RouteHome",
+				"pattern": "RouteHome",
+				"target": ["TargetHome"]
+			}, {
+				"pattern": "getResults",
+				"name": "getResults",
+				"target": "getResults"
+			}, {
+				"pattern": "postUpgrade",
+				"name": "postUpgrade",
+				"target": "postUpgrade"
+			},
+			{
+				"pattern": "home",
+				"name": "home",
+				"target": "home"	
+			}],
+			"targets": {
+				"TargetHome": {
+					"viewType": "XML",
+					"transition": "slide",
+					"clearControlAggregation": false,
+					"viewId": "Splash",
+					"viewName": "Splash"
+				},
+				"getResults": {
+					"viewId": "getResults",
+					"viewName": "GetResults"
+				},
+				"postUpgrade": {
+					"viewId": "postUpgrade",
+					"viewName": "PostUpgrade"
+				},
+				"home": {
+					"viewId": "home",
+					"viewName": "Home"
+				}
+			}
+		}
+	}
+}

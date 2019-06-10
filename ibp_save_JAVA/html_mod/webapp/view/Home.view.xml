@@ -1,0 +1,83 @@
+<mvc:View controllerName="html_mod.html_mod.controller.Home" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout"
+	xmlns:u="sap.ui.unified" displayBlock="true" xmlns="sap.m">
+	<Shell id="shell">
+		<App id="app" class="sapUiResponsiveMargin">
+			<pages>
+				<Page id="page" title="{i18n>title}">
+					<content>
+						<l:VerticalLayout class="sapUiSmallMargin">
+							<Input id="businessUser" placeholder="{i18n>businessUser}" valueLiveUpdate="true" width="400px"/>
+							<Input id="systemUser" placeholder="{i18n>systemUser}" valueLiveUpdate="true" width="100%"/>
+							<Input id="systemUserPassword" placeholder="{i18n>systemUserPassword}" valueLiveUpdate="true" width="100%"/>
+							<u:FileUploader width="400px" id="fileUploader" change="onChangeFUP" fileType="csv" maximumFileSize="1" buttonOnly="true"
+								buttonText="Upload Excel File"/>
+							<Button id="submitData" press="submitAll" enabled="false" text="Submit" width="100%"/>
+						</l:VerticalLayout>
+						<l:VerticalLayout class="sapUiSmallMargin">
+							
+							<Button id="runSequenceAll" press="runSequenceAll" text="Run Sequence in Parallel" width="400px" enabled="false"/>
+							<Button id="runSequenceOrder" press="runSequenceOrder" text="Run Sequence in Order" width="400px" enabled="false"/>
+							<Button id="runAll" press="runAll" text="Run All in Parallel" width="400px" enabled="false"/>
+							<Button id="runAllOrder" press="runAllOrder" text="Run All Jobs in Order" width="400px" enabled="false"/>
+							<Button id="jobsDone" press="jobsDone" text="Next" width="400px" enabled="false"/>
+			
+						</l:VerticalLayout>
+						
+						<CheckBox id = "postCheck" text="Post-upgrade" />
+						<Table id="jobsTable" headerText="{i18n>jobsTableHeader}" items="{/Jobs}" class="sapUiResponsiveMargin" width="auto">
+							<headerToolbar>
+								<Toolbar>
+									<Title text="{i18n>jobsTitle}"/>
+									<ToolbarSpacer/>
+								</Toolbar>
+							</headerToolbar>
+							<columns>
+								<Column>
+									<Text text="{i18n>columnJobStatus}"/>
+								</Column>
+								<Column>
+									<Text text="{i18n>columnJobName}"/>
+								</Column>
+								<Column>
+									<Text text="{i18n>columnJobDescription}"/>
+								</Column>
+								<Column hAlign="Center">
+									<Text text="{i18n>columnJobSequence}"/>
+								</Column>
+								<Column>
+									<Text text="{i18n>columnJobStart}"/>
+								</Column>
+								<Column>
+									<Text text="{i18n>columnJobCreator}"/>
+								</Column>
+								<Column>
+									<Text text="{i18n>columnRunJob}"/>
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<cells>
+										<core:Icon src="{StatusIcon}" size="1.85em" color="{StatusIconColor}">
+											<core:layoutData>
+												<FlexItemData growFactor="1"/>
+											</core:layoutData>
+										</core:Icon>
+										<Text text="{Name}"/>
+										<ObjectStatus class="sapUiSmallMarginBottom" text="{Description}" state="{path: 'Description', formatter: '.formatter.checkErrorColor'}"/>
+										<FlexBox alignItems="Center" justifyContent="Center">
+											<Text text="{Sequence}" class="sequence"/>
+										</FlexBox>
+										
+										<Text text="{Start}"/>
+										<Text text="{Creator}"/>
+										<Button icon="{RunIcon}" press=".runOne(${Name}, ${Description}, ${id})" enabled="{Enabled}"/>
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</content>
+				</Page>
+			</pages>
+		</App>
+	</Shell>
+</mvc:View>

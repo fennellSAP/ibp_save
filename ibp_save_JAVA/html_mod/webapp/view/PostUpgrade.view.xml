@@ -1,0 +1,47 @@
+<mvc:View controllerName="html_mod.html_mod.controller.PostUpgrade" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+	<Page>
+		<content>
+			<l:VerticalLayout class="sapUiSmallMargin">
+				
+				<Label text="Select Pre-Upgrade IBP Version" labelFor="preVersion" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+				<Select id="preVersion" forceSelection="true" width="400px" items="{ path: 'versions>/IBP_Version', sorter: { path: 'versions>Version' } }">
+					<core:Item key="{versions>Version}" text="{versions>Version}"/>
+				</Select>
+				
+				<Label text="Select Post-Upgrade IBP Version" labelFor="postVersion" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+				<Select id="postVersion" forceSelection="true" width="100%" items="{ path: 'versions>/IBP_Version', sorter: { path: 'versions>Version' } }">
+					<core:Item key="{versions>Version}" text="{versions>Version}"/>
+				</Select>
+				
+				<Button id="submitData" press="dataSubmit" enabled="true" text="Submit" width="100%"/>
+				
+				<Button id="generateReport" press="generateReport" enabled="false" text="Generate Report" width="100%"/>
+				<Button id="generateExcel" text="Export Spreadsheet" press="generateExcel" width="100%" enabled="false"/>
+			</l:VerticalLayout>
+			<Table id="errorsTable" headerText="Errors Found" class="sapUiResponsiveMargin" width="auto" visible="false" items="{errors>/Errors}">
+				<headerToolbar>
+					<Toolbar>
+						<Title text="Errors Found"/>
+						<ToolbarSpacer/>
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column>
+						<Text text="Before"/>
+					</Column>
+					<Column>
+						<Text text="After"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<Text text="{errors>Before}"/>
+							<Text text="{errors>After}"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+	</Page>
+</mvc:View>

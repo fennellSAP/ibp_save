@@ -1,0 +1,31 @@
+<mvc:View controllerName="html_mod.html_mod.controller.Splash" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout"
+	xmlns:u="sap.ui.unified" displayBlock="true" xmlns="sap.m">
+	<Shell id="shell">
+		<App id="app" class="sapUiResponsiveMargin">
+			<pages>
+				<Page id="page" title="{i18n>title}">
+					<content>
+						<l:VerticalLayout class="sapUiSmallMargin">
+							
+							<Label text="Enter System Name" labelfor="systemName" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+							<Input id="systemName" placeholder="System Name" valueLiveUpdate="true" width="400px"/>
+			
+							
+							<Label text="Enter Host Name" labelFor="systemPath" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+							<Input id="systemPath" placeholder="Host Name" valueLiveUpdate="true" width="100%"/>
+							
+							<Label text="Select Current IBP Version" labelFor="ibpVersion" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+							<Select id="ibpVersion" forceSelection="true" width="100%"
+								items="{ path: '/IBP_Version', sorter: { path: 'Version' } }">
+								<core:Item key="{Version}" text="{Version}"/>
+							</Select>
+							
+							<Button id="submitData" press="toHomePage" text="Next" width="100%" enabled="true"/>
+							
+						</l:VerticalLayout>
+					</content>
+				</Page>
+			</pages>
+		</App>
+	</Shell>
+</mvc:View>

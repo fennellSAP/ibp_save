@@ -1,0 +1,25 @@
+{
+  "welcomeFile": "/html_mod/index.html",
+  "authenticationMethod": "route",
+  "logout": {
+    "logoutEndpoint": "/do/logout"
+  },
+  "routes": [
+    {
+      "source": "^/IBP_GET_DATA/(.*)$",
+      "target": "$1",
+      "authenticationType": "none",
+      "destination": "IBP_GET_DATA",
+      "csrfProtection": false
+    },
+    {
+      "source": "^/html_mod/(.*)$",
+      "target": "$1",
+      "localDir": "webapp"
+    },
+    {
+      "source": "^/index.xsodata/.*$",
+      "destination": "get_data_api"
+    }
+  ]
+}
