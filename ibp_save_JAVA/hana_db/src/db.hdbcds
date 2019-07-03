@@ -4,7 +4,6 @@ context db {
 	 
     entity results {
         key data_id : Integer64;
-        run_num : Integer;
         val_1   : String(100);
         val_2   : String(100);
         val_3   : String(100);
@@ -1007,8 +1006,7 @@ context db {
 
     entity descriptors {
         key guid		  : Integer64;
-        ibp_version       : String(64);
-        run_num           : Integer;
+        scenario          : String(64);
         business_user     : String(64);
         sys_user          : String(64);
         template_id       : String(64);
@@ -1022,6 +1020,16 @@ context db {
         attr_1            : String(100);
         attr_2            : String(100);
         key_figure		  : String(100);
+    };
+    
+    entity users {
+    	key email         : String(100);
+    	password          : String(100);
+    	business_user     : String(100);
+    	sys_user          : String(100);
+    	sys_pwd           : String(100);
+    	sys_host          : String(100);
+   
     };
    
 };

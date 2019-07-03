@@ -28,20 +28,11 @@ sap.ui.define([
 
 			};
 
-			var oData = {
-				"SelectedSystem": " ",
-				"IBP_Version": [{
-					"Version": "1905"
-				}, {
-					"Version": "1908"
-				}, {
-					"Version": "1911"
-				}]
-			};
-
-			// set explored app's demo model on this sample
-			var oModel = new JSONModel(oData);
-			this.getView().setModel(oModel, "versions");
+			var scenarioObject = this.getOwnerComponent().getModel("userInfo").getProperty("/userScenarioObject");
+			console.log("Scenario Object: " + scenarioObject);
+			var ScenarioModel = new JSONModel(scenarioObject);
+			this.byId('scenario1Name').setModel(ScenarioModel);
+			this.byId('scenario2Name').setModel(ScenarioModel);
 
 			this._keys = [];
 
@@ -68,6 +59,8 @@ sap.ui.define([
 
 			this._row_gain = false;
 			this._extra_rows = 0;
+
+			this._NoRowsLost = false;
 		},
 
 		onPatternMatched: function () {
@@ -75,173 +68,28 @@ sap.ui.define([
 			this._sysUser = this.getOwnerComponent().getModel("userInfo").getProperty("/sysUser");
 			this._businessUser = this.getOwnerComponent().getModel("userInfo").getProperty("/businessUser");
 			this._templateName = this.getOwnerComponent().getModel("userInfo").getProperty("/templateName");
-			this._ibp_version = this.getOwnerComponent().getModel("userInfo").getProperty("/ibp_version");
-		},
-
-		dataSubmit: function () {
-
-			var that = this;
-
-			sap.ui.core.BusyIndicator.show();
-
-			setTimeout(function () {
-				sap.ui.core.BusyIndicator.attachEventOnce("Open", that.getDataCall(that));
-			}, 1750);
-
-		},
-
-		getDataCall: function (oView) {
-
-			var that = oView;
-
-			var sUrl = "/LOG_SRV/xIBPxC_IBPLOGS_TBL?$filter=LogId eq '000004F0BAE8069F160090240E47B3F4'";
-
-			var jModel = new sap.ui.model.json.JSONModel();
-
-			jModel.loadData(sUrl, null, false);
-			var loaded = jModel.dataLoaded();
-
-			loaded.then(function () {
-
-				var urlToCall = jModel.oData["d"]["results"][0]["FreeText"];
-				var msg1 = jModel.oData["d"]["results"][0]["msgv1"];
-				var msg1Split = msg1.split(";");
-
-				that._scenario = msg1Split[0];
-				that._version = msg1Split[1];
-
-				var msg2 = jModel.oData["d"]["results"][0]["msgv2"];
-				var msg2Split = msg2.split(";");
-
-				that._currtoid = msg2Split[0];
-				that._umtoid = msg2Split[1];
-				that._timerolling = msg2Split[2];
-				that._periodid = msg2Split[3];
-				that._periodid4 = msg2Split[4];
-
-				var keyfigures = jModel.oData["d"]["results"][0]["msgv3"];
-
-				that._planninglevel = jModel.oData["d"]["results"][0]["msgv4"];
-
-				var start_pos = urlToCall.indexOf("=");
-				var end_pos = urlToCall.indexOf("&");
-
-				that._attrs = urlToCall.substring(start_pos + 1, end_pos);
-
-				var newUrl = "/PT6_GET_DATA/" + urlToCall;
-
-				var encoded_URL = encodeURI(newUrl);
-
-				var jModel2 = new sap.ui.model.json.JSONModel();
-				jModel2.loadData(newUrl, null, false);
-				var loaded2 = jModel2.dataLoaded();
-
-				loaded2.then(function () {
-
-					var data = jModel2.oData["d"]["results"];
-
-					that.postToDB(data);
-				});
-
-			});
-
-		},
-
-		postToDB: function (data) {
-
-			console.log("Hi");
-
-			var that = this;
-			
-			
-			var oModel = new sap.ui.model.odata.v2.ODataModel("/IBP_GET_JOB_DATA/index.xsodata/");
-
-			var keys = Object.keys(data[0]);
-
-			var time_period_key = keys[1];
-
-			var guids = [];
-
-			for (var i = 2; i < keys.length; i++) {
-
-				var key = keys[i];
-				var oEntry = {};
-				var guid = that.makeGuid(guids);
-				guids.push(guid);
-
-				oEntry.guid = guid;
-				oEntry.run_num = 2;
-				oEntry.ibp_version = that._ibp_version;
-				oEntry.business_user = that._businessUser;
-				oEntry.sys_user = that._sysUser;
-				oEntry.plan_level = that._planninglevel;
-				oEntry.template_id = that._templateName;
-				oEntry.curr_to = that._currtoid;
-				oEntry.uom_to = that._umtoid;
-				oEntry.time_rolling = that._timerolling;
-				oEntry.time_period_start = data[0][time_period_key].trim();
-				oEntry.time_period_end = data[data.length - 1][time_period_key].trim();
-				oEntry.period_id = time_period_key;
-				oEntry.key_figure = key;
-
-				oModel.create('/Job_Descriptors', oEntry, {
-					success: function (result) {
-						//console.log(result);
-					},
-					error: function (oError) {
-						console.log(oError);
-					}
-				});
-
-				var oEntry2 = {};
-				oEntry2.data_id = guid;
-				oEntry2.run_num = 2;
-				
-				var lastEntry = false;
-
-				for (var k = 0; k < data.length; k++) {
-
-					var kf_value = data[k][key];
-					var time_period = data[k][time_period_key].trim();
-					var formatted_data = time_period + ":" + kf_value;
-					var column = "val_" + (k + 1);
-
-					oEntry2[column] = formatted_data;
-					
-					if (i === keys.length - 1 && k === data.length - 1) {
-						lastEntry = true;
-					}
-				}
-
-				oModel.create('/Job_Results', oEntry2, {
-					success: function (result) {
-						if (lastEntry) {
-							sap.ui.core.BusyIndicator.hide();
-							that.getView().byId("submitData").setEnabled(false);
-							that.getView().byId("generateReport").setEnabled(true);
-						}
-					},
-					error: function (oError) {
-						console.log(oError);
-					}
-				});
-
-			}
+			this._scenario = this.getOwnerComponent().getModel("userInfo").getProperty("/scenario");
 
 		},
 
 		generateReport: function () {
 
 			var that = this;
-			var descBefore;
-			var descAfter;
-			that._ibp_preVersion = that.getView().byId("preVersion").getSelectedKey();
-			that._ibp_postVersion = that.getView().byId("postVersion").getSelectedKey();
+
+			sap.ui.core.BusyIndicator.show(25);
+
+			setTimeout(function () {
+				sap.ui.core.BusyIndicator.attachEventOnce("Open");
+			}, 1000);
+
+			var descBefore, descAfter;
+			that._scenario1Name = that.getView().byId("scenario1Name").getSelectedKey();
+			that._scenario2Name = that.getView().byId("scenario2Name").getSelectedKey();
 
 			var oModelAuthorizationSet = new sap.ui.model.json.JSONModel(
 
-				"/IBP_GET_JOB_DATA/index.xsodata/Job_Descriptors?$filter=run_num eq 1 and business_user eq '" + that._businessUser +
-				"' and sys_user eq '" + that._sysUser + "' and ibp_version eq '" + that._ibp_preVersion + "'");
+				"/IBP_GET_JOB_DATA/index.xsodata/Job_Descriptors?$filter=business_user eq '" + that._businessUser +
+				"' and sys_user eq '" + that._sysUser + "' and scenario eq '" + that._scenario1Name + "'");
 
 			oModelAuthorizationSet.attachRequestCompleted(function (oData, resp) {
 
@@ -249,8 +97,8 @@ sap.ui.define([
 
 				var oModelAuthorizationSet2 = new sap.ui.model.json.JSONModel(
 
-					"/IBP_GET_JOB_DATA/index.xsodata/Job_Descriptors?$filter=run_num eq 2 and business_user eq '" + that._businessUser +
-					"' and sys_user eq '" + that._sysUser + "' and ibp_version eq '" + that._ibp_postVersion + "'");
+					"/IBP_GET_JOB_DATA/index.xsodata/Job_Descriptors?$filter=business_user eq '" + that._businessUser +
+					"' and sys_user eq '" + that._sysUser + "' and scenario eq '" + that._scenario2Name + "'");
 
 				oModelAuthorizationSet2.attachRequestCompleted(function (oData2, resp2) {
 
@@ -290,7 +138,7 @@ sap.ui.define([
 
 					var foundError = false;
 
-					if (keys[j] === "__metadata" || keys[j] === "guid" || keys[j] === "run_num" || keys[j] === "ibp_version") {
+					if (keys[j] === "__metadata" || keys[j] === "guid" || keys[j] === "scenario") {
 
 						continue;
 					}
@@ -300,7 +148,7 @@ sap.ui.define([
 
 						for (var k = 0; k < keys.length; k++) {
 
-							if (descBefore[i][keys[k]] === null || keys[k] === "__metadata" || keys[k] === "guid" || keys[k] === "run_num") {
+							if (descBefore[i][keys[k]] === null || keys[k] === "__metadata" || keys[k] === "guid" || keys[k] === "scenario") {
 
 								continue;
 
@@ -341,7 +189,7 @@ sap.ui.define([
 
 				for (var n = 0; n < keys.length; n++) {
 
-					if (descBefore[i][keys[n]] === null || keys[n] === "__metadata" || keys[n] === "guid" || keys[n] === "run_num") {
+					if (descBefore[i][keys[n]] === null || keys[n] === "__metadata" || keys[n] === "guid" || keys[n] === "scenario") {
 
 						continue;
 
@@ -371,6 +219,8 @@ sap.ui.define([
 
 			var that = this;
 
+			that._NoRowsLost = true;
+
 			(function loop(i) {
 
 				if (i >= descBefore.length) return;
@@ -384,7 +234,7 @@ sap.ui.define([
 
 				for (var j = 0; j < keys.length; j++) {
 
-					if (keys[j] === "__metadata" || keys[j] === "run_num" || keys[j] === "guid" || keys[j] === "ibp_version") {
+					if (keys[j] === "__metadata" || keys[j] === "scenario" || keys[j] === "guid") {
 
 						continue;
 
@@ -433,7 +283,7 @@ sap.ui.define([
 
 						for (var k = 0; k < result_keys.length; k++) {
 
-							if (result_keys[k] === "data_id" || result_keys[k] === "run_num" || result_keys[k] === "__metadata") {
+							if (result_keys[k] === "data_id" || result_keys[k] === "scenario" || result_keys[k] === "__metadata") {
 
 								continue;
 							}
@@ -521,7 +371,7 @@ sap.ui.define([
 
 					var foundError = false;
 
-					if (keys[j] === "__metadata" || keys[j] === "guid" || keys[j] === "run_num" || keys[j] === "ibp_version") {
+					if (keys[j] === "__metadata" || keys[j] === "guid" || keys[j] === "scenario") {
 
 						continue;
 					}
@@ -532,7 +382,7 @@ sap.ui.define([
 
 						for (var k = 0; k < keys.length; k++) {
 
-							if (descAfter[i][keys[k]] === null || keys[k] === "__metadata" || keys[k] === "guid" || keys[k] === "run_num") {
+							if (descAfter[i][keys[k]] === null || keys[k] === "__metadata" || keys[k] === "guid" || keys[k] === "scenario") {
 								continue;
 							} else {
 								if (!that._found_attr_keys) {
@@ -566,7 +416,7 @@ sap.ui.define([
 				var errorString2 = "";
 				for (var n = 0; n < keys.length; n++) {
 
-					if (descAfter[i][keys[n]] === null || keys[n] === "__metadata" || keys[n] === "guid" || keys[n] === "run_num") {
+					if (descAfter[i][keys[n]] === null || keys[n] === "__metadata" || keys[n] === "guid" || keys[n] === "scenario") {
 						continue;
 					} else {
 
@@ -616,13 +466,40 @@ sap.ui.define([
 				that.getView().byId("errorsTable").setVisible(true);
 				that.getView().byId("generateExcel").setEnabled(true);
 				that.getView().byId("generateReport").setEnabled(false);
-				that.getView().setBusy(false);
+				sap.ui.core.BusyIndicator.hide();
+
+				var corrupt_data_perc = (1 - (that._corrupt_cells / that._total_cells).toFixed(2)) * 100;
+
+				if (!isNaN(corrupt_data_perc)) {
+
+					if (corrupt_data_perc > 99) {
+						
+						that.getView().byId("errorChart").setValueColor("Good");
+						
+					} else if (corrupt_data_perc >= 90) {
+						
+						that.getView().byId("errorChart").setValueColor("Critical");
+						
+					} else {
+						
+						that.getView().byId("errorChart").setValueColor("Error");
+					}
+
+					that.getView().byId("errorChart").setPercentage(corrupt_data_perc);
+					that.getView().byId("errorChart").setVisible(true);
+
+				}
+
 			};
 
 			if (descBefore.length === descAfter.length) {
 
 				$.when(that.analyzeNoLoss(descBefore, descAfter)).then(function () {
-					updateTable();
+					setTimeout(function () {
+
+						updateTable();
+
+					}, 2000);
 				});
 
 			} else if (descBefore.length > descAfter.length) {
@@ -649,6 +526,8 @@ sap.ui.define([
 			this.makeStatusReport();
 
 			aProducts = this.reportModel.getProperty('/Report');
+			
+			console.log(aProducts);
 
 			oSettings = {
 				workbook: {
@@ -677,7 +556,7 @@ sap.ui.define([
 					label: " ",
 					property: "desc" + String(k),
 					type: 'string',
-					width: (k * 20)
+					width: 20 + (3*(k * k * k))
 				};
 				columns.push(beg_column);
 			}
@@ -711,7 +590,7 @@ sap.ui.define([
 
 			var before_row = {};
 
-			before_row["desc1"] = this._ibp_preVersion + " Data";
+			before_row["desc1"] = this._scenario1Name + " Data";
 
 			if (rowBefore !== null) {
 
@@ -731,7 +610,7 @@ sap.ui.define([
 
 			var after_row = {};
 
-			after_row["desc1"] = this._ibp_postVersion + " Data";
+			after_row["desc1"] = this._scenario2Name + " Data";
 
 			if (rowAfter !== null) {
 
@@ -838,6 +717,7 @@ sap.ui.define([
 				} else {
 					corrupt_data_perc = (1 - (this._corrupt_rows / this._total_rows)) * 100;
 					corrupt_data_perc = corrupt_data_perc.toFixed(2);
+
 					corrupt_data_perc_string = "Rows Unharmed: " + String(corrupt_data_perc) + "%";
 
 					corrupt_data_perc_row = {};
@@ -858,6 +738,14 @@ sap.ui.define([
 			var blank_row = {};
 			blank_row["desc1"] = " ";
 			this._report.Report.splice(3, 0, blank_row);
+
+		},
+
+		navSplash: function () {
+
+			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			oRouter.navTo("splash");
+
 		}
 	});
 });

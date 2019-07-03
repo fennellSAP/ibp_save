@@ -1,30 +1,38 @@
 <mvc:View controllerName="html_mod.html_mod.controller.Home" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout"
-	xmlns:u="sap.ui.unified" displayBlock="true" xmlns="sap.m">
+	xmlns:u="sap.ui.unified" displayBlock="true" xmlns="sap.m" xmlns:tnt="sap.tnt">
 	<Shell id="shell">
 		<App id="app" class="sapUiResponsiveMargin">
 			<pages>
-				<Page id="page" title="{i18n>title}">
+				<Page id="page" title="{i18n>title}" showHeader="false">
 					<content>
-						<l:VerticalLayout class="sapUiSmallMargin">
-							<Input id="businessUser" placeholder="{i18n>businessUser}" valueLiveUpdate="true" width="400px"/>
-							<Input id="systemUser" placeholder="{i18n>systemUser}" valueLiveUpdate="true" width="100%"/>
-							<Input id="systemUserPassword" placeholder="{i18n>systemUserPassword}" valueLiveUpdate="true" width="100%"/>
-							<u:FileUploader width="400px" id="fileUploader" change="onChangeFUP" fileType="csv" maximumFileSize="1" buttonOnly="true"
-								buttonText="Upload Excel File"/>
-							<Button id="submitData" press="submitAll" enabled="false" text="Submit" width="100%"/>
-						</l:VerticalLayout>
+						<tnt:ToolHeader>
+							<Button icon="sap-icon://nav-back" type="Transparent" press="navToSplash">
+								<layoutData>
+									<OverflowToolbarLayoutData priority="NeverOverflow"/>
+								</layoutData>
+							</Button>
+						</tnt:ToolHeader>
 						<l:VerticalLayout class="sapUiSmallMargin">
 							
-							<Button id="runSequenceAll" press="runSequenceAll" text="Run Sequence in Parallel" width="400px" enabled="false"/>
-							<Button id="runSequenceOrder" press="runSequenceOrder" text="Run Sequence in Order" width="400px" enabled="false"/>
-							<Button id="runAll" press="runAll" text="Run All in Parallel" width="400px" enabled="false"/>
-							<Button id="runAllOrder" press="runAllOrder" text="Run All Jobs in Order" width="400px" enabled="false"/>
-							<Button id="jobsDone" press="jobsDone" text="Next" width="400px" enabled="false"/>
-			
+							<Label visible="true" id = "newScenarioLabel" text="Enter Scenario Name" labelFor="newScenario" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+							<Input visible="true" id="newScenario" placeholder="Scenario Name" valueLiveUpdate="true" width="350px"/>
+							
+							<Button id="scenarioSelected" press="scenarioSelected" text="Continue" width="100%" enabled="true"/>
 						</l:VerticalLayout>
-						
-						<CheckBox id = "postCheck" text="Post-upgrade" />
-						<Table id="jobsTable" headerText="{i18n>jobsTableHeader}" items="{/Jobs}" class="sapUiResponsiveMargin" width="auto">
+						<l:VerticalLayout class="sapUiSmallMargin">
+							<u:FileUploader width="350px" id="fileUploader" change="onChangeFUP" fileType="csv" maximumFileSize="1" buttonOnly="true"
+								buttonText="Upload Excel File" enabled="false"/>
+							<Button id="submitData" press="submitAll" enabled="false" text="Validate Jobs" width="350px"/>
+							<Button id="jobsDone" press="jobsDone" text="Submit Data" width="100%" enabled="false"/>
+							<Button id="navToSplash" press="navToSplash" text="Done" width="100%" enabled="false"/>
+						</l:VerticalLayout>
+						<l:VerticalLayout class="sapUiSmallMargin">
+							<Button id="runSequenceAll" press="runSequenceAll" text="Run Sequence in Parallel" width="350px" enabled="false"/>
+							<Button id="runSequenceOrder" press="runSequenceOrder" text="Run Sequence in Order" width="100%" enabled="false"/>
+							<Button id="runAll" press="runAll" text="Run All in Parallel" width="100%" enabled="false"/>
+							<Button id="runAllOrder" press="runAllOrder" text="Run All Jobs in Order" width="100%" enabled="false"/>
+						</l:VerticalLayout>
+						<Table id="jobsTable" visible="true" headerText="{i18n>jobsTableHeader}" items="{/Jobs}" class="sapUiResponsiveMargin" width="auto">
 							<headerToolbar>
 								<Toolbar>
 									<Title text="{i18n>jobsTitle}"/>
@@ -67,10 +75,36 @@
 										<FlexBox alignItems="Center" justifyContent="Center">
 											<Text text="{Sequence}" class="sequence"/>
 										</FlexBox>
-										
 										<Text text="{Start}"/>
 										<Text text="{Creator}"/>
 										<Button icon="{RunIcon}" press=".runOne(${Name}, ${Description}, ${id})" enabled="{Enabled}"/>
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+						
+						
+						
+						<Table id="attrTable" headerText="Filters" items="{/Data}" class="sapUiResponsiveMargin" width="auto" visible="false">
+							<headerToolbar>
+								<Toolbar>
+									<Title text="Filters"/>
+									<ToolbarSpacer/>
+								</Toolbar>
+							</headerToolbar>
+							<columns>
+								<Column>
+									<Text text="Attribute"/>
+								</Column>
+								<Column>
+									<Text text="Value"/>
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<cells>
+										<Text text="{attribute}"/>
+										<Text text="{value}"/>
 									</cells>
 								</ColumnListItem>
 							</items>

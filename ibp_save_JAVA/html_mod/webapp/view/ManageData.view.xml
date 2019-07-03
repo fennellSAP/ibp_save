@@ -1,0 +1,48 @@
+<mvc:View controllerName="html_mod.html_mod.controller.ManageData" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout" xmlns:u="sap.ui.unified" displayBlock="true" xmlns="sap.m" xmlns:tnt="sap.tnt">
+	<Shell id="shell">
+		<App id="app" class="sapUiResponsiveMargin">
+			<pages>
+				<Page id="page" title="{i18n>title}" showHeader="false">
+					<content>
+						<tnt:ToolHeader>
+							<Button icon="sap-icon://nav-back" type="Transparent" press="navSplash">
+								<layoutData>
+									<OverflowToolbarLayoutData priority="NeverOverflow"/>
+								</layoutData>
+							</Button>
+						</tnt:ToolHeader>
+						<l:VerticalLayout class="sapUiSmallMargin">
+							
+							<ObjectHeader visible="false" id="noScenariosFound" title="No Scenarios Available"></ObjectHeader>
+							
+							<Label visible="true" id="scenarioLabel" text="Choose Existing Scenarios" labelFor="scenCheckBox" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+							
+							<VBox items="{ path: '/Scenario'}" visible="true" id="checkBoxHolder">
+								<items>
+									<CheckBox id="scenCheckBox" visible="{visible}" text='{Name}' selected='{selected}' select=".checkBoxClick(${Name}, ${selected})"/>
+								</items>
+							</VBox>
+							
+							<Button id="viewDataBtn" press="viewData" enabled="true" text="View My Data" width="350px"/>
+							<Button id="deleteDataBtn" press="deleteData" enabled="true" text="Delete Data" width="350px"/>
+						</l:VerticalLayout>
+						<l:VerticalLayout class="sapUiSmallMargin"></l:VerticalLayout>
+						<l:VerticalLayout class="sapUiSmallMargin">
+							<Input id="businessUser" placeholder="{i18n>businessUser}" required="true" valueLiveUpdate="true" width="350px" visible="false"/>
+							<Input id="systemUser" placeholder="{i18n>systemUser}" required="true" valueLiveUpdate="true" width="100%" visible="false"/>
+							<Input id="systemUserPassword" placeholder="{i18n>systemUserPassword}" required="true" valueLiveUpdate="true" width="100%" visible="false"/>
+							<Button id="submitDelete" press="submitDelete" enabled="true" text="Delete Data" width="350px" visible="false"/>
+							<Button id="submitView" press="submitView" enabled="true" text="View Data" width="350px" visible="false"/>
+							<Label text="Select Version to Delete Corresponding Data From" labelFor="ibpVersionDelete" class="sapUiTinyMarginEnd sapUiTinyMarginTop"
+								visible="false"/>
+							<Select id="ibpVersionDelete" forceSelection="true" width="100%" visible="false" items="{ path: '/IBP_Version'}">
+								<core:Item key="{Version}" text="{Version}"/>
+							</Select>
+						</l:VerticalLayout>
+					</content>
+				</Page>
+			</pages>
+		</App>
+	</Shell>
+</mvc:View>

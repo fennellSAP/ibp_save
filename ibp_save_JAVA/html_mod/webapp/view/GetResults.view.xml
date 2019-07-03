@@ -1,5 +1,5 @@
 <mvc:View controllerName="html_mod.html_mod.controller.GetResults" xmlns:l="sap.ui.layout" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
-	<Page>
+	<Page showHeader="false">
 		<content>
 			<l:VerticalLayout class="sapUiSmallMargin">
 				<!--<Input id="templateName" placeholder="Enter Template Name" valueLiveUpdate="true" width="400px"/>-->

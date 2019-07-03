@@ -3,26 +3,37 @@
 	<Shell id="shell">
 		<App id="app" class="sapUiResponsiveMargin">
 			<pages>
-				<Page id="page" title="{i18n>title}">
+				<Page id="page" title="{i18n>title}" showHeader="false">
 					<content>
-						<l:VerticalLayout class="sapUiSmallMargin">
+						
+						
+						<ObjectHeader title="IBP Test Automation" condensed="true">
 							
-							<Label text="Enter System Name" labelfor="systemName" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
-							<Input id="systemName" placeholder="System Name" valueLiveUpdate="true" width="400px"/>
-			
-							
-							<Label text="Enter Host Name" labelFor="systemPath" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
-							<Input id="systemPath" placeholder="Host Name" valueLiveUpdate="true" width="100%"/>
-							
-							<Label text="Select Current IBP Version" labelFor="ibpVersion" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
-							<Select id="ibpVersion" forceSelection="true" width="100%"
-								items="{ path: '/IBP_Version', sorter: { path: 'Version' } }">
-								<core:Item key="{Version}" text="{Version}"/>
-							</Select>
-							
-							<Button id="submitData" press="toHomePage" text="Next" width="100%" enabled="true"/>
-							
-						</l:VerticalLayout>
+						</ObjectHeader>
+						
+						
+						<GenericTile class="sapUiTinyMarginBegin sapUiMediumMarginTop tileLayout" header="Enter System Info" press="sysInfoSelect">
+							<TileContent footer="Step 1">
+								<ImageContent id="tile1Icon" src="sap-icon://laptop"/>
+							</TileContent>
+						</GenericTile>
+						<GenericTile id="tile2" blocked="true" class="sapUiTinyMarginBegin sapUiMediumMarginTop tileLayout" header="Data Submission"
+							press="homeSelect">
+							<TileContent footer="Step 2">
+								<ImageContent id="tile2Icon" src="sap-icon://home-share"/>
+							</TileContent>
+						</GenericTile>
+						<GenericTile id="tile3" blocked="true" class="sapUiTinyMarginBegin sapUiMediumMarginTop tileLayout" header="Scenario Data Analysis"
+							press="dataAnalysisSelect">
+							<TileContent footer="Analyze Data">
+								<ImageContent src="sap-icon://business-objects-experience"/>
+							</TileContent>
+						</GenericTile>
+						<GenericTile id="tile4" blocked="true" class="sapUiTinyMarginBegin sapUiMediumMarginTop tileLayout" header="Manage Data" press="manageDataSelect">
+							<TileContent footer="View/Delete Your Data">
+								<ImageContent src="sap-icon://crm-service-manager"/>
+							</TileContent>
+						</GenericTile>
 					</content>
 				</Page>
 			</pages>

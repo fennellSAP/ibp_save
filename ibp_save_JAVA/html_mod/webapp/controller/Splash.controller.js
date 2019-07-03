@@ -8,47 +8,64 @@ sap.ui.define([
 
 	return Controller.extend("html_mod.html_mod.controller.Splash", {
 
-		formatter: formatter,
+			formatter: formatter,
 
-		onInit: function () {
+			onInit: function () {
 
-			var oData = {
-				"SelectedSystem": " ",
-				"IBP_Version": [
-					{
-						"Version": "1905"
-					},
-					{
-						"Version": "1908"
-					},
-					{
-						"Version": "1911"
-					}
-				]
-			};
+				console.log("Testing delete method");
 
-			// set explored app's demo model on this sample
-			var oModel = new JSONModel(oData);
-			this.getView().setModel(oModel);
-			
-			console.log("Splash Controller");
+				
+
+			var oEventBus = sap.ui.getCore().getEventBus();
+			oEventBus.subscribe("systemInfo", "updateTile", this.updateTiles, this);
+			oEventBus.subscribe("home", "updateTile", this.updateTiles, this);
 
 		},
-		
-		toHomePage: function () {
-			
-			var system = this.getView().byId("systemName").getValue();
-			this.getOwnerComponent().getModel("userInfo").setProperty("/system", system);
-			
-			var service_url = this.getView().byId("systemPath").getValue();
-			this.getOwnerComponent().getModel("userInfo").setProperty("/service_url", service_url);
-			
-			var ibp_version = this.getView().byId("ibpVersion").getSelectedKey();
-			this.getOwnerComponent().getModel("userInfo").setProperty("/ibp_version", ibp_version);
-			
+
+		updateTiles: function (sChannel, sEvent, oData) {
+
+			var that = this;
+
+			if (sEvent === "updateTile") {
+
+				for (var i = 0; i < oData["tiles"].length; i++) {
+
+					var tileId = "tile" + String(oData["tiles"][i]);
+
+					that.getView().byId(tileId).setBlocked(false);
+
+				}
+
+			}
+
+		},
+
+		sysInfoSelect: function () {
+
+			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			oRouter.navTo("systemInfo");
+
+		},
+
+		homeSelect: function () {
+
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.navTo("home");
-			
+		},
+
+		dataAnalysisSelect: function () {
+
+			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			oRouter.navTo("postUpgrade");
+
+		},
+
+		manageDataSelect: function () {
+
+			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			oRouter.navTo("manageData");
+
 		}
+
 	});
 });

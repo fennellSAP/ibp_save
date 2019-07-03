@@ -5,3 +5,11 @@
 .sequence {
 	text-align : center;
 }
+
+.tileLayout {
+	float: left;
+}
+
+#errorChart {
+	margin: 0 auto;
+}

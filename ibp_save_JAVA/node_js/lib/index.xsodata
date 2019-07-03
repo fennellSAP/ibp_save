@@ -4,4 +4,6 @@ service {
 		
 	"ibp_save_JAVA.hana_db::db.results" as "Job_Results";
 	
+	"ibp_save_JAVA.hana_db::db.users" as "Users";
+	
 }

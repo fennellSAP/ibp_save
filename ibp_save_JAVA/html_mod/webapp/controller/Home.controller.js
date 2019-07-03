@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"../model/formatter",
-	"sap/ui/model/json/JSONModel"
-], function (Controller, formatter, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	'sap/m/MessageToast'
+], function (Controller, formatter, JSONModel, MessageToast) {
 	"use strict";
 
 	return Controller.extend("html_mod.html_mod.controller.Home", {
@@ -11,9 +12,46 @@ sap.ui.define([
 
 		onInit: function () {
 			
+			var that = this;
 			
 			var resultRoute = this.getOwnerComponent().getRouter().getRoute("home");
 			resultRoute.attachPatternMatched(this.onPatternMatched, this);
+			
+			this._sysUser = this.getOwnerComponent().getModel("userInfo").getProperty("/sysUser");
+			this._businessUser = this.getOwnerComponent().getModel("userInfo").getProperty("/businessUser");
+			this._pwd = this.getOwnerComponent().getModel("userInfo").getProperty("/pwd");
+			this._system = this.getOwnerComponent().getModel("userInfo").getProperty("/system");
+			this._systemUrl = this.getOwnerComponent().getModel("userInfo").getProperty("/service_url");
+			this._allScenarios = this.getOwnerComponent().getModel("userInfo").getProperty("/allScenarios");
+			this._scenarioObjects = this.getOwnerComponent().getModel("userInfo").getProperty("/userScenarioObject");
+			// if (this._foundScenario) {
+				
+			// 	var ScenarioModel = new JSONModel(userScenarios);
+			// 	this.byId('scenarioSelect').setModel(ScenarioModel);
+			
+			// 	this._useExistingToggle = false;
+			// 	this._newScenario = false;
+				
+			// } else {
+				
+			// 	this.getView().byId("scenarioLabel").setVisible(false);
+			// 	this.getView().byId("scenarioSelect").setVisible(false);
+			// 	this.getView().byId("orText").setVisible(false);
+			
+			// 	this.getView().byId("newScenarioLabel").setVisible(true);
+			// 	this.getView().byId("newScenario").setVisible(true);
+			// 	this._newScenario = true;
+				
+			// 	this.getView().byId("createScenario").setVisible(false);
+				
+			// 	this._useExistingToggle = true;
+				
+			// }
+			
+			
+
+			
+
 
 			this._data = {
 				Jobs: [{
@@ -40,20 +78,88 @@ sap.ui.define([
 		
 		onPatternMatched: function () {
 			
-			this._ibp_version = this.getOwnerComponent().getModel("userInfo").getProperty("/ibp_version");
 
 		},
 
 		onBeforeRendering: function () {
 
 			this.byId('jobsTable').setModel(this.jModel);
+			
+		},
+		
+		tileChange: function (tileNums) {
+		
+			var oEventBus = sap.ui.getCore().getEventBus();
+			oEventBus.publish("systemInfo", "updateTile", { tiles: tileNums});
+			
+			
+		},
+		
+		// createScenario: function () {
+			
+		// 	if (!this._useExistingToggle) {
+				
+		// 		this.getView().byId("scenarioLabel").setVisible(false);
+		// 		this.getView().byId("scenarioSelect").setVisible(false);
+			
+		// 		this.getView().byId("newScenarioLabel").setVisible(true);
+		// 		this.getView().byId("newScenario").setVisible(true);
+		// 		this._newScenario = true;
+				
+		// 		this.getView().byId("createScenario").setText("Use Existing Scenario");
+				
+		// 		this._useExistingToggle = true;
+				
+		// 	} else {
+				
+		// 		this.getView().byId("scenarioLabel").setVisible(true);
+		// 		this.getView().byId("scenarioSelect").setVisible(true);
+			
+		// 		this.getView().byId("newScenarioLabel").setVisible(false);
+		// 		this.getView().byId("newScenario").setVisible(false);
+		// 		this._newScenario = false;
+				
+		// 		this.getView().byId("createScenario").setText("Create New Scenario");
+				
+		// 		this._useExistingToggle = false;
+				
+		// 	}
+			
+		// },
+		
+		scenarioSelected: function () {
+		
+			var newScenario = this.getView().byId("newScenario").getValue();
+			this.tileChange([3,4]);
+			this._scenario = newScenario;
+			
+			
+			// if (this._newScenario) {
+				
+			// 	this.getOwnerComponent().getModel("userInfo").setProperty("/scenario", newScenario);
+			// 	this.getOwnerComponent().getModel("userInfo").setProperty("/preOrPost", "pre");
+			// 	this._scenario = newScenario;
+			// 	this._preOrPost = "pre";
+			// 	this.tileChange([4]);
+				
+			// } else {
+				
+			// 	this.getOwnerComponent().getModel("userInfo").setProperty("/scenario", scenario);
+			// 	this.getOwnerComponent().getModel("userInfo").setProperty("/preOrPost", "post");
+			// 	this._scenario = scenario;
+			// 	this._preOrPost = "post";
+			// 	this.tileChange([3,4]);
+			// }
+			
+			this.getView().byId("fileUploader").setEnabled(true);
+				
 		},
 
 		submitAll: function () {
 
 			var that = this;
-
-			var businessUser = that.getView().byId("businessUser").getValue();
+			
+			that.getView().byId("scenarioSelected").setEnabled(false);
 
 			var sUrl = "/FC2_Connection/JobTemplateSet";
 
@@ -94,7 +200,7 @@ sap.ui.define([
 					that._data.Jobs[n].Description = description;
 					that._data.Jobs[n].Enabled = enabled;
 					that._data.Jobs[n].StatusIcon = statusIcon;
-					that._data.Jobs[n].Creator = businessUser;
+					that._data.Jobs[n].Creator = that._businessUser;
 					that._data.Jobs[n].StatusIconColor = statusIconColor;
 					that._data.Jobs[n].Completed = completed;
 					that.jModel.refresh();
@@ -178,9 +284,8 @@ sap.ui.define([
 
 			function Job(name, desc, id) {
 				this.name = name,
-					this.desc = desc,
-					this.id = id
-
+				this.desc = desc,
+				this.id = id
 			};
 
 			var jobsToRun = [];
@@ -225,21 +330,17 @@ sap.ui.define([
 
 			var that = this;
 
-			var sysUser = that.getView().byId("systemUser").getValue();
-			var pwd = that.getView().byId("systemUserPassword").getValue();
-			var businessUser = that.getView().byId("businessUser").getValue();
-
 			(function loop(n) {
 
 				if (n >= jobs.length) {
 					return;
 				}
 
-				$.when(that.runJob(jobs[n].name, jobs[n].desc, jobs[n].id, sysUser, pwd)).done(function (data, status, xhr) {
+				$.when(that.runJob(jobs[n].name, jobs[n].desc, jobs[n].id, that._sysUser, that._pwd)).done(function (data, status, xhr) {
 
 					var token = xhr.getResponseHeader('x-csrf-token');
 
-					$.when(that.scheduleJob(jobs[n].name, businessUser, jobs[n].desc, token, sysUser, pwd)).done(function (data, status, xhr) {
+					$.when(that.scheduleJob(jobs[n].name, that._businessUser, jobs[n].desc, token, that._sysUser, that._pwd)).done(function (data, status, xhr) {
 
 						var jobRan = data["d"]["JobName"];
 						var jobRunCount = data["d"]["JobRunCount"];
@@ -273,7 +374,7 @@ sap.ui.define([
 							entity.Description = new_desc;
 							that.jModel.refresh();
 
-							$.when(that.getJobStatus(jobRan, jobRunCount, sysUser, pwd, token)).done(function (data, status, xhr) {
+							$.when(that.getJobStatus(jobRan, jobRunCount, that._sysUser, that._pwd, token)).done(function (data, status, xhr) {
 
 								var jobStatus = data["d"]["JobStatus"];
 								console.log("Job Status: " + jobStatus);
@@ -307,10 +408,6 @@ sap.ui.define([
 
 			var that = this;
 
-			var sysUser = that.getView().byId("systemUser").getValue();
-			var pwd = that.getView().byId("systemUserPassword").getValue();
-			var businessUser = that.getView().byId("businessUser").getValue();
-
 			for (var i = 0; i < jobs.length; i++) {
 
 				$.when(that.runJob(jobs[i].name, jobs[i].desc, jobs[i].id)).done(function (data, status, xhr) {
@@ -320,7 +417,7 @@ sap.ui.define([
 					var thisJob = data["myJobName"];
 					var thisDesc = data["myJobDesc"];
 
-					$.when(that.scheduleJob(thisJob, businessUser, thisDesc, token, sysUser, pwd)).done(function (data, status, xhr) {
+					$.when(that.scheduleJob(thisJob, that._businessUser, thisDesc, token, that._sysUser, that._pwd)).done(function (data, status, xhr) {
 
 						var jobRan = data["d"]["JobName"];
 						var jobRunCount = data["d"]["JobRunCount"];
@@ -354,7 +451,7 @@ sap.ui.define([
 							entity.Description = new_desc;
 							that.jModel.refresh();
 
-							$.when(that.getJobStatus(jobRan, jobRunCount, sysUser, pwd, token)).done(function (data, status, xhr) {
+							$.when(that.getJobStatus(jobRan, jobRunCount, that._sysUser, that._pwd, token)).done(function (data, status, xhr) {
 
 								var jobStatus = data["d"]["JobStatus"];
 
@@ -545,28 +642,258 @@ sap.ui.define([
 
 		jobsDone: function (oEvent) {
 
-			var sysUser = this.getView().byId("systemUser").getValue();
-			this.getOwnerComponent().getModel("userInfo").setProperty("/sysUser", sysUser);
+			var that = this;
+			
+			this.getOwnerComponent().getModel("userInfo").setProperty("/jobsRan", true);
+			
+			that.getView().byId("jobsDone").setEnabled(false);
+			
+			sap.ui.core.BusyIndicator.show(25);
+			
+			setTimeout(function() { 
+				sap.ui.core.BusyIndicator.attachEventOnce("Open", that.getDataCall(that));
+			},1750);
 
-			var businessUser = this.getView().byId("businessUser").getValue();
-			this.getOwnerComponent().getModel("userInfo").setProperty("/businessUser", businessUser);
+		},
+		
+		getDataCall: function (oView) {
 
-			var pwd = this.getView().byId("systemUserPassword").getValue();
-			this.getOwnerComponent().getModel("userInfo").setProperty("/pwd", pwd);
+			var that = oView;
 
-			var isSelected = this.byId("postCheck").getSelected();
+			var sUrl = "/LOG_SRV/xIBPxC_IBPLOGS_TBL?$filter=LogId eq '000004F0BAE8069F160090240E47B3F4'";
 
-			if (isSelected) {
+			var jModel = new sap.ui.model.json.JSONModel();
 
-				var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-				oRouter.navTo("postUpgrade");
+			jModel.loadData(sUrl, null, false);
+			var loaded = jModel.dataLoaded();
+			loaded.then(function () {
+				console.log(jModel.oData["d"]["results"][0]);
+				var urlToCall = jModel.oData["d"]["results"][0]["FreeText"];
 
-			} else {
+				var msg1 = jModel.oData["d"]["results"][0]["msgv1"];
+				var msg1Split = msg1.split(";");
+				that._scen = msg1Split[0];
+				that._version = msg1Split[1];
 
-				var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-				oRouter.navTo("getResults");
+				var msg2 = jModel.oData["d"]["results"][0]["msgv2"];
+				var msg2Split = msg2.split(";");
+				that._currtoid = msg2Split[0];
+				that._umtoid = msg2Split[1];
+				that._timerolling = msg2Split[2];
+				that._periodid = msg2Split[3];
+				that._periodid4 = msg2Split[4];
+
+				var keyfigures = jModel.oData["d"]["results"][0]["msgv3"];
+
+				that._planninglevel = jModel.oData["d"]["results"][0]["msgv4"];
+
+				var start_pos = urlToCall.indexOf("=");
+				var end_pos = urlToCall.indexOf("&");
+
+				that._attrs = urlToCall.substring(start_pos + 1, end_pos);
+
+				var newUrl = "/PT6_GET_DATA/" + urlToCall;
+
+				var encoded_URL = encodeURI(newUrl);
+
+				var jModel2 = new sap.ui.model.json.JSONModel();
+				jModel2.loadData(newUrl, null, false);
+				var loaded2 = jModel2.dataLoaded();
+
+				loaded2.then(function () {
+
+					var data = jModel2.oData["d"]["results"];
+
+					that._values = {
+
+						Data: [
+						{
+							attribute: "Planning Area",
+							value: that._templateName
+						},
+						{
+							attribute: "Scenario",
+							value: that._scen
+						}, {
+							attribute: "Version",
+							value: that._version
+						}, {
+							attribute: "CurrToid",
+							value: that._currtoid
+						}, {
+							attribute: "UmToid",
+							value: that._umtoid
+						}, {
+							attribute: "Time Rolling",
+							value: that._timerolling
+						}, {
+							attribute: "PeriodID4",
+							value: that._periodid
+						}, {
+							attribute: "PeriodID4",
+							value: that._periodid4
+						}, {
+							attribute: "Key Figures",
+							value: keyfigures
+						}, {
+							attribute: "Planning Level",
+							value: that._planninglevel
+						}]
+					};
+					
+					that.jModel = new sap.ui.model.json.JSONModel();
+					that.jModel.setData(that._values);
+					that.byId('attrTable').setModel(that.jModel);
+					that.jModel.refresh();
+
+					that.postToDB(data);
+				});
+
+			});
+
+		},
+		
+		postToDB: function (data) {
+
+			var that = this;
+
+			var oModel = new sap.ui.model.odata.v2.ODataModel("/IBP_GET_JOB_DATA/index.xsodata/");
+
+			var keys = Object.keys(data[0]);
+
+			var time_period_key = keys[1];
+
+			var guids = [];
+
+			for (var i = 2; i < keys.length; i++) {
+
+				var key = keys[i];
+
+				var oEntry = {};
+
+				var guid = that.makeGuid(guids);
+				guids.push(guid);
+
+				oEntry.guid = guid;
+				oEntry.scenario = that._scenario;
+				//oEntry.preOrPost = that._preOrPost;
+				oEntry.business_user = that._businessUser;
+				oEntry.sys_user = that._sysUser;
+				oEntry.plan_level = that._planninglevel;
+				oEntry.template_id = that._templateName;
+				oEntry.curr_to = that._currtoid;
+				oEntry.uom_to = that._umtoid;
+				oEntry.time_rolling = that._timerolling;
+				oEntry.time_period_start = data[0][time_period_key].trim();
+				oEntry.time_period_end = data[data.length - 1][time_period_key].trim();
+				oEntry.period_id = time_period_key;
+				oEntry.key_figure = key;
+
+				oModel.create('/Job_Descriptors', oEntry, {
+					success: function (result) {
+						//console.log(result);
+					},
+					error: function (oError) {
+						console.log(oError);
+					}
+				});
+
+				var oEntry2 = {};
+				oEntry2.data_id = guid;
+
+				for (var k = 0; k < data.length; k++) {
+
+					var kf_value = data[k][key];
+
+					var time_period = data[k][time_period_key].trim();
+					var formatted_data = time_period + ":" + kf_value;
+					var column = "val_" + (k + 1);
+					oEntry2[column] = formatted_data;
+				}
+
+				oModel.create('/Job_Results', oEntry2, {
+					success: function (result) {
+						//console.log(result);
+					},
+					error: function (oError) {
+						console.log(oError);
+					}
+				});
 			}
 
+			sap.ui.core.BusyIndicator.hide();
+			that.getView().byId("attrTable").setVisible(true);
+			that.getView().byId("jobsTable").setVisible(false);
+			that.getView().byId("navToSplash").setEnabled(true);
+			
+			// if (that._preOrPost === "post") {
+				
+			// 		that.getOwnerComponent().getModel("userInfo").setProperty("/completedScenario", true);
+			// 		var completedScenarios = that.getOwnerComponent().getModel("userInfo").getProperty("/analyzedScenarios");
+					
+			// 		completedScenarios["Scenario"].push({"Name": that._scenario});
+			// 		that.getOwnerComponent().getModel("userInfo").setProperty("/analyzedScenarios", completedScenarios);
+			// }
+			
+			var allScenarios = that.getOwnerComponent().getModel("userInfo").getProperty("/allScenarios");
+			if (!allScenarios.includes(that._scenario)) {
+				
+				console.log("Did not find scenario in existing scenarios");
+				
+				allScenarios.push(that._scenario);
+				that.getOwnerComponent().getModel("userInfo").setProperty("/allScenarios", allScenarios);
+				
+				console.log("Adding new scenario locally");
+				console.log("New scenario objects that are local: " + that._scenarioObjects);
+				that._scenarioObjects["Scenario"].push({"Name":that._scenario});
+				
+				that.getOwnerComponent().getModel("userInfo").setProperty("/userScenarioObject", that._scenarioObjects);
+			}
+			
+			
+
+			
+			
+			
+			
+			var msg = 'Data successfully submitted for scenario ' + that._scenario;
+			MessageToast.show(msg);
+
+		},
+		
+		makeGuid: function (guids) {
+
+			var guid = new Date().getTime();
+
+			var violation = true;
+
+			while (violation) {
+
+				var foundMatch = false;
+
+				for (var j = 0; j < guids.length; j++) {
+
+					if (guids[j] === guid) {
+
+						guid = new Date().getTime();
+						foundMatch = true;
+					}
+				}
+				if (!foundMatch) {
+
+					violation = false;
+					guids.push(guid);
+				}
+			}
+			return guid;
+		},
+		
+		
+		navToSplash: function () {
+			
+			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			oRouter.navTo("splash");
+			
 		},
 
 		getJobsInMinSequence: function () {

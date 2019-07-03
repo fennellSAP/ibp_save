@@ -1,23 +1,39 @@
-<mvc:View controllerName="html_mod.html_mod.controller.PostUpgrade" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
-	<Page>
+<mvc:View controllerName="html_mod.html_mod.controller.PostUpgrade" xmlns:semantic="sap.m.semantic" xmlns:core="sap.ui.core"
+	xmlns:c="sap.suite.ui.microchart" xmlns:l="sap.ui.layout" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:tnt="sap.tnt">
+	<Page showHeader="false">
 		<content>
+			<tnt:ToolHeader>
+				<Button icon="sap-icon://nav-back" type="Transparent" press="navSplash">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow"/>
+					</layoutData>
+				</Button>
+			</tnt:ToolHeader>
+			
+			<ObjectHeader title="Choose Scenarios to Compare"></ObjectHeader>
+			
 			<l:VerticalLayout class="sapUiSmallMargin">
-				
-				<Label text="Select Pre-Upgrade IBP Version" labelFor="preVersion" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
-				<Select id="preVersion" forceSelection="true" width="400px" items="{ path: 'versions>/IBP_Version', sorter: { path: 'versions>Version' } }">
-					<core:Item key="{versions>Version}" text="{versions>Version}"/>
+				<Label text="Select Scenario 1" labelFor="scenario1Name" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+				<Select id="scenario1Name" forceSelection="true" width="400px" items="{ path: '/Scenario'}">
+					<core:Item key="{Name}" text="{Name}"/>
 				</Select>
 				
-				<Label text="Select Post-Upgrade IBP Version" labelFor="postVersion" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
-				<Select id="postVersion" forceSelection="true" width="100%" items="{ path: 'versions>/IBP_Version', sorter: { path: 'versions>Version' } }">
-					<core:Item key="{versions>Version}" text="{versions>Version}"/>
+				<Label text="Select Scenario 2" labelFor="scenario2Name" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+				<Select id="scenario2Name" forceSelection="true" width="400px" items="{ path: '/Scenario'}">
+					<core:Item key="{Name}" text="{Name}"/>
 				</Select>
 				
-				<Button id="submitData" press="dataSubmit" enabled="true" text="Submit" width="100%"/>
-				
-				<Button id="generateReport" press="generateReport" enabled="false" text="Generate Report" width="100%"/>
+				<Button id="generateReport" press="generateReport" enabled="true" text="Generate Report" width="100%"/>
 				<Button id="generateExcel" text="Export Spreadsheet" press="generateExcel" width="100%" enabled="false"/>
 			</l:VerticalLayout>
+			<l:VerticalLayout>
+				<FlexBox width="80%" height="80%">
+				<items>
+					<c:RadialMicroChart class="sapUiLargeMargin" id="errorChart" size="Responsive" percentage="99" visible="false" valueColor="Neutral"></c:RadialMicroChart>
+				</items>
+			</FlexBox>
+			</l:VerticalLayout>
+			
 			<Table id="errorsTable" headerText="Errors Found" class="sapUiResponsiveMargin" width="auto" visible="false" items="{errors>/Errors}">
 				<headerToolbar>
 					<Toolbar>

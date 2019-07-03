@@ -49,10 +49,10 @@
 	"sap.ui5": {
 		"flexEnabled": false,
 		"rootView": {
-			"viewName": "html_mod.html_mod.view.Splash",
+			"viewName": "html_mod.html_mod.view.Login",
 			"type": "XML",
 			"async": true,
-			"id": "Splash"
+			"id": "Login"
 		},
 		"dependencies": {
 			"minUI5Version": "1.60.1",
@@ -130,14 +130,34 @@
 				"pattern": "home",
 				"name": "home",
 				"target": "home"	
+			},
+			{
+				"pattern": "manageData",
+				"name": "manageData",
+				"target": "manageData"
+			},
+			{
+				"pattern": "systemInfo",
+				"name": "systemInfo",
+				"target": "systemInfo"
+			},
+			{
+				"pattern": "splash",
+				"name": "splash",
+				"target": "splash"
+			},
+			{
+				"pattern": "",
+				"name": "login",
+				"target": "login"
 			}],
 			"targets": {
 				"TargetHome": {
 					"viewType": "XML",
 					"transition": "slide",
 					"clearControlAggregation": false,
-					"viewId": "Splash",
-					"viewName": "Splash"
+					"viewId": "SystemInfo",
+					"viewName": "SystemInfo"
 				},
 				"getResults": {
 					"viewId": "getResults",
@@ -150,6 +170,22 @@
 				"home": {
 					"viewId": "home",
 					"viewName": "Home"
+				},
+				"manageData": {
+					"viewId":"manageData",
+					"viewName": "ManageData"
+				},
+				"systemInfo": {
+					"viewId": "systemInfo",
+					"viewName": "SystemInfo"
+				},
+				"splash": {
+					"viewId": "splash",
+					"viewName": "Splash"
+				},
+				"login": {
+					"viewId": "login",
+					"viewName": "Login"
 				}
 			}
 		}
