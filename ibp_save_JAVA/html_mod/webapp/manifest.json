@@ -75,13 +75,15 @@
 			},
 			"": {
 				"type": "sap.ui.model.odata.v2.ODataModel",
+				"dataSource": "IBP_GET_JOB_DATA",
+				"preload": true,
 				"settings": {
 					"defaultOperationMode": "Server",
-					"defaultBindingMode": "OneWay",
-					"defaultCountMode": "Request"
-				},
-				"dataSource": "IBP_GET_JOB_DATA",
-				"preload": true
+					"defaultBindingMode": "TwoWay",
+					"defaultCountMode": "Request",
+					"defaultUpdateMethod": "sap.ui.model.odata.UpdateMethod.Put"
+				}
+				
 			},
 			"userInfo": {
 				"type": "sap.ui.model.json.JSONModel"

@@ -13,30 +13,45 @@
 							</Button>
 						</tnt:ToolHeader>
 						
-						<l:VerticalLayout class="sapUiSmallMargin">
+						<l:VerticalLayout class="sapUiLargeMarginTop">
 							
-							<Label text="Enter System Name" labelfor="systemName" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
-							<Input id="systemName" placeholder="System Name" valueLiveUpdate="true" width="400px"/>
-			
+							<FlexBox direction="Column" alignItems="Start">
+								<items>
 							
-							<Label text="Enter Host Name" labelFor="systemPath" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
-							<Input id="systemPath" placeholder="Host Name" valueLiveUpdate="true" width="100%"/>
+									<Label text="Host Name:" labelFor="systemPath" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+									<Input editable="false" id="systemPath" placeholder="Host Name" valueLiveUpdate="true" width="350px"/>
 							
-							<Button class="sapUiSmallMarginTop" id="testConn" press="testConn" text="Test Connection" width="100%" enabled="true"/>
+									<Button class="sapUiSmallMarginTop" id="testConn" press="testConn" text="Test Connection" width="350px" enabled="false"/>
+									
+									<Button class="sapUiSmallMarginTop" id="editBtn" press="allowEdit" text="Edit" width="350px" enabled="true"/>
+								</items>
+							</FlexBox>
 							
-						
+							
+							
 						</l:VerticalLayout>
-						<l:VerticalLayout class="sapUiSmallMargin">
-							<Label text="Enter Business User" labelfor="businessUser" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
-							<Input id="businessUser" placeholder="Business User" required="true" valueLiveUpdate="true" width="350px"/>
+						
+						
+						<l:VerticalLayout class="sapUiLargeMarginTop sapUiLargeMarginBegin">
 							
-							<Label text="Enter System User" labelfor="systemUser" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
-							<Input id="systemUser" placeholder="System User" required="true" valueLiveUpdate="true" width="100%"/>
+							<FlexBox direction="Column" alignItems="Start">
+								<items>
+									
+									<Label text="Business User:" labelfor="businessUser" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+									<Input editable="false" id="businessUser" placeholder="Business User" required="true" valueLiveUpdate="true" width="350px"/>
+									
+									<Label text="System User:" labelfor="systemUser" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+									<Input editable="false" id="systemUser" placeholder="System User" required="true" valueLiveUpdate="true" width="350px"/>
+									
+									<Label text="System User Password:" labelfor="systemUserPassword" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
+									<Input editable="false" id="systemUserPassword" placeholder="Password" required="true" valueLiveUpdate="true" width="350px"/>
+									
+									<Button id="submitData" class="sapUiSmallMarginTop" press="toHomePage" text="Save and Continue" width="350px" enabled="false"/>
+								</items>
+							</FlexBox>
+
 							
-							<Label text="Enter System User Password" labelfor="systemUserPassword" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
-							<Input id="systemUserPassword" placeholder="Password" required="true" valueLiveUpdate="true" width="100%"/>
 							
-							<Button id="submitData" class="sapUiSmallMarginTop" press="toHomePage" text="Save and Continue" width="100%" enabled="false"/>
 							
 						</l:VerticalLayout>
 					</content>

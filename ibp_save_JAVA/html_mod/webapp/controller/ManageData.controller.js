@@ -13,39 +13,46 @@ sap.ui.define([
 		formatter: formatter,
 
 		onInit: function () {
-
+			
+			this.getProperties();
+			this.setControls();
+		},
+		
+		getProperties : function () {
+			
 			this._allScenarios = this.getOwnerComponent().getModel("userInfo").getProperty("/allScenarios");
 			this._sysUser = this.getOwnerComponent().getModel("userInfo").getProperty("/sysUser");
 			this._businessUser = this.getOwnerComponent().getModel("userInfo").getProperty("/businessUser");
 			this._userScenarios = this.getOwnerComponent().getModel("userInfo").getProperty("/userScenarioObject");
 			this._scenarioNum = this._userScenarios["Scenario"].length;
-			
-			if (this._scenarioNum < 1) {
-				this.getView().byId("noScenariosFound").setVisible(true);
-				this.getView().byId("scenarioLabel").setVisible(false);
-				this.getView().byId("scenCheckBox").setVisible(false);
-				this.getView().byId("viewDataBtn").setEnabled(false);
-				this.getView().byId("deleteDataBtn").setEnabled(false);
-			}
+		},
+		
+		setControls : function () {
 			
 			var that = this;
+			
+			if (that._scenarioNum < 1) {
+				that.getView().byId("noScenariosFound").setVisible(true);
+				that.getView().byId("scenarioLabel").setVisible(false);
+				that.getView().byId("scenCheckBox").setVisible(false);
+				that.getView().byId("viewDataBtn").setEnabled(false);
+				that.getView().byId("deleteDataBtn").setEnabled(false);
+			}	
 			
 			for (var i = 0; i < that._userScenarios["Scenario"].length; i++) {
 				that._userScenarios["Scenario"][i]["selected"] = false;
 				that._userScenarios["Scenario"][i]["visible"] = true;
 			}
 			
-			this._userScenarios["Scenario"].push({
+			that._userScenarios["Scenario"].push({
 				"Name": "Select/Deselect All Scenarios",
 				"selected": false,
 				"visible": true
 			});
 			
 			
-			this._scenarioObject = new JSONModel(this._userScenarios);
-			this.getView().setModel(this._scenarioObject);
-			
-
+			that._scenarioObject = new JSONModel(that._userScenarios);
+			that.getView().setModel(that._scenarioObject);
 		},
 		
 		viewData: function() {
@@ -148,7 +155,6 @@ sap.ui.define([
 			
 			var that = this;
 			var oModel = new sap.ui.model.odata.v2.ODataModel("/IBP_GET_JOB_DATA/index.xsodata/");
-			
 			
 			var all_rows = {
 				"Rows": []

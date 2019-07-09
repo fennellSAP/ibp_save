@@ -28,7 +28,7 @@
 									<Input id="pwdReEnter" visible="false" type="Password" placeholder="Re-Enter Password" valueLiveUpdate="true" width="400px"/>
 								
 									<Button class="sapUiSmallMarginTop" id="loginBtn" press="authorize" text="Login" width="100%" enabled="true"/>
-									<Button class="sapUiSmallMarginTop" visible="false" id="createBtn" press="createAccount" text="Create Account" width="100%" enabled="true"/>
+									<Button class="sapUiSmallMarginTop" visible="false" id="createBtn" press="verifyAccount" text="Create Account" width="100%" enabled="true"/>
 			
 									
 									<Text text="Don't have an account?" id="createMsg" visible="true" class="sapUiLargeMarginTop"/>

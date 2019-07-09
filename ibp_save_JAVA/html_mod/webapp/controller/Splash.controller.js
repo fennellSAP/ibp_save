@@ -8,17 +8,35 @@ sap.ui.define([
 
 	return Controller.extend("html_mod.html_mod.controller.Splash", {
 
-			formatter: formatter,
+		formatter: formatter,
 
-			onInit: function () {
+		onInit: function () {
 
-				console.log("Testing delete method");
+			var that = this;
 
-				
+			that.loginTileShow();
 
 			var oEventBus = sap.ui.getCore().getEventBus();
 			oEventBus.subscribe("systemInfo", "updateTile", this.updateTiles, this);
 			oEventBus.subscribe("home", "updateTile", this.updateTiles, this);
+
+		},
+
+		loginTileShow: function () {
+			
+			var that = this;
+			var foundScenario = that.getOwnerComponent().getModel("userInfo").getProperty("/existingScenario");
+			var dataEntered = that.getOwnerComponent().getModel("userInfo").getProperty("/dataEntered");
+
+			if (foundScenario) {
+
+				that.getView().byId("tile2").setBlocked(false);
+				that.getView().byId("tile3").setBlocked(false);
+				that.getView().byId("tile4").setBlocked(false);
+
+			} else if (dataEntered) {
+				that.getView().byId("tile2").setBlocked(false);
+			}
 
 		},
 

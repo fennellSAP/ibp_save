@@ -17,42 +17,12 @@ sap.ui.define([
 			var resultRoute = this.getOwnerComponent().getRouter().getRoute("home");
 			resultRoute.attachPatternMatched(this.onPatternMatched, this);
 			
-			this._sysUser = this.getOwnerComponent().getModel("userInfo").getProperty("/sysUser");
-			this._businessUser = this.getOwnerComponent().getModel("userInfo").getProperty("/businessUser");
-			this._pwd = this.getOwnerComponent().getModel("userInfo").getProperty("/pwd");
-			this._system = this.getOwnerComponent().getModel("userInfo").getProperty("/system");
-			this._systemUrl = this.getOwnerComponent().getModel("userInfo").getProperty("/service_url");
-			this._allScenarios = this.getOwnerComponent().getModel("userInfo").getProperty("/allScenarios");
-			this._scenarioObjects = this.getOwnerComponent().getModel("userInfo").getProperty("/userScenarioObject");
-			// if (this._foundScenario) {
-				
-			// 	var ScenarioModel = new JSONModel(userScenarios);
-			// 	this.byId('scenarioSelect').setModel(ScenarioModel);
+			this.getProperties();
+			this.assignModel();
+		},
+		
+		assignModel :  function () {
 			
-			// 	this._useExistingToggle = false;
-			// 	this._newScenario = false;
-				
-			// } else {
-				
-			// 	this.getView().byId("scenarioLabel").setVisible(false);
-			// 	this.getView().byId("scenarioSelect").setVisible(false);
-			// 	this.getView().byId("orText").setVisible(false);
-			
-			// 	this.getView().byId("newScenarioLabel").setVisible(true);
-			// 	this.getView().byId("newScenario").setVisible(true);
-			// 	this._newScenario = true;
-				
-			// 	this.getView().byId("createScenario").setVisible(false);
-				
-			// 	this._useExistingToggle = true;
-				
-			// }
-			
-			
-
-			
-
-
 			this._data = {
 				Jobs: [{
 					Name: '',
@@ -73,7 +43,17 @@ sap.ui.define([
 			this.jModel = new sap.ui.model.json.JSONModel();
 			this.jModel.setData(this._data);
 			this._data.Jobs.shift();
-
+		},
+		
+		getProperties : function () {
+			
+			this._sysUser = this.getOwnerComponent().getModel("userInfo").getProperty("/sysUser");
+			this._businessUser = this.getOwnerComponent().getModel("userInfo").getProperty("/businessUser");
+			this._pwd = this.getOwnerComponent().getModel("userInfo").getProperty("/pwd");
+			this._system = this.getOwnerComponent().getModel("userInfo").getProperty("/system");
+			this._systemUrl = this.getOwnerComponent().getModel("userInfo").getProperty("/service_url");
+			this._allScenarios = this.getOwnerComponent().getModel("userInfo").getProperty("/allScenarios");
+			this._scenarioObjects = this.getOwnerComponent().getModel("userInfo").getProperty("/userScenarioObject");
 		},
 		
 		onPatternMatched: function () {
@@ -95,61 +75,13 @@ sap.ui.define([
 			
 		},
 		
-		// createScenario: function () {
-			
-		// 	if (!this._useExistingToggle) {
-				
-		// 		this.getView().byId("scenarioLabel").setVisible(false);
-		// 		this.getView().byId("scenarioSelect").setVisible(false);
-			
-		// 		this.getView().byId("newScenarioLabel").setVisible(true);
-		// 		this.getView().byId("newScenario").setVisible(true);
-		// 		this._newScenario = true;
-				
-		// 		this.getView().byId("createScenario").setText("Use Existing Scenario");
-				
-		// 		this._useExistingToggle = true;
-				
-		// 	} else {
-				
-		// 		this.getView().byId("scenarioLabel").setVisible(true);
-		// 		this.getView().byId("scenarioSelect").setVisible(true);
-			
-		// 		this.getView().byId("newScenarioLabel").setVisible(false);
-		// 		this.getView().byId("newScenario").setVisible(false);
-		// 		this._newScenario = false;
-				
-		// 		this.getView().byId("createScenario").setText("Create New Scenario");
-				
-		// 		this._useExistingToggle = false;
-				
-		// 	}
-			
-		// },
-		
 		scenarioSelected: function () {
 		
 			var newScenario = this.getView().byId("newScenario").getValue();
+			
 			this.tileChange([3,4]);
+			
 			this._scenario = newScenario;
-			
-			
-			// if (this._newScenario) {
-				
-			// 	this.getOwnerComponent().getModel("userInfo").setProperty("/scenario", newScenario);
-			// 	this.getOwnerComponent().getModel("userInfo").setProperty("/preOrPost", "pre");
-			// 	this._scenario = newScenario;
-			// 	this._preOrPost = "pre";
-			// 	this.tileChange([4]);
-				
-			// } else {
-				
-			// 	this.getOwnerComponent().getModel("userInfo").setProperty("/scenario", scenario);
-			// 	this.getOwnerComponent().getModel("userInfo").setProperty("/preOrPost", "post");
-			// 	this._scenario = scenario;
-			// 	this._preOrPost = "post";
-			// 	this.tileChange([3,4]);
-			// }
 			
 			this.getView().byId("fileUploader").setEnabled(true);
 				
@@ -776,7 +708,6 @@ sap.ui.define([
 
 				oEntry.guid = guid;
 				oEntry.scenario = that._scenario;
-				//oEntry.preOrPost = that._preOrPost;
 				oEntry.business_user = that._businessUser;
 				oEntry.sys_user = that._sysUser;
 				oEntry.plan_level = that._planninglevel;
@@ -826,15 +757,6 @@ sap.ui.define([
 			that.getView().byId("jobsTable").setVisible(false);
 			that.getView().byId("navToSplash").setEnabled(true);
 			
-			// if (that._preOrPost === "post") {
-				
-			// 		that.getOwnerComponent().getModel("userInfo").setProperty("/completedScenario", true);
-			// 		var completedScenarios = that.getOwnerComponent().getModel("userInfo").getProperty("/analyzedScenarios");
-					
-			// 		completedScenarios["Scenario"].push({"Name": that._scenario});
-			// 		that.getOwnerComponent().getModel("userInfo").setProperty("/analyzedScenarios", completedScenarios);
-			// }
-			
 			var allScenarios = that.getOwnerComponent().getModel("userInfo").getProperty("/allScenarios");
 			if (!allScenarios.includes(that._scenario)) {
 				
@@ -849,12 +771,6 @@ sap.ui.define([
 				
 				that.getOwnerComponent().getModel("userInfo").setProperty("/userScenarioObject", that._scenarioObjects);
 			}
-			
-			
-
-			
-			
-			
 			
 			var msg = 'Data successfully submitted for scenario ' + that._scenario;
 			MessageToast.show(msg);
